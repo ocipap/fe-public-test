@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>search review</title>
+
+    <style>
+      #search {
+        position: relative;
+        width: 300px;
+        height: 40px;
+      }
+      .input-search {
+        box-sizing: border-box;
+        padding: 5px 10px;
+        width: 100%;
+        height: 100%;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+      .input-search.focus {
+        outline: none;
+        border-bottom: 0;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+      .input-search.focus ~ .filter-list {
+        display: block;
+      }
+
+      /* .input-search:focus {
+        outline: none;
+        border-bottom: 0;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+      .input-search:focus ~ .filter-list {
+        display: block;
+      } */
+
+      .filter-list {
+        box-sizing: border-box;
+        position: absolute;
+        left: 0;
+        top: 39px;
+        overflow-y: auto;
+        display: none;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        max-height: 150px;
+        border: 1px solid #ddd;
+        border-top: 0;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+        z-index: 10;
+      }
+      .filter-list > .fruit {
+        list-style: none;
+        padding: 5px 10px;
+      }
+      .filter-list > .fruit:hover {
+        background-color: #eee;
+        cursor: pointer;
+      }
+      .filter-list > .empty {
+        padding: 5px 10px;
+        text-align: center;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="search">
+      <input class="input-search" type="text" />
+      <ul class="filter-list"></ul>
+    </div>
+    <script type="text/javascript" src="../lib/fruits.js"></script>
+    <script type="text/javascript">
+      const list = fruits.map(f => f.toLowerCase());
+      const $list = document.querySelector('.filter-list');
+      const $input = document.querySelector('.input-search');
+      const empty = `<li class="empty">검색 결과가 없습니다.</li>`
+
+      const filterAndMap = value => {
+        const result = list.filter(item => item.replace(/\s+/g, '').includes(value));
+
+        if (result.length) {
+          return result.map(fruit => `<li class="fruit">${fruit}</li>`).join('');
+        } else {
+          return empty;
+        }
+      };
+
+      $list.innerHTML = empty;
+
+      $input.addEventListener('focus', ({ target }) => {
+        $input.classList.add('focus');
+
+        const value = target.value.toLowerCase().replace(/\s+/g, '');
+
+        if (value) {
+          $list.innerHTML = filterAndMap(value);
+        }
+      });
+      $input.addEventListener('input', ({ target }) => {
+        const value = target.value.toLowerCase().replace(/\s+/g, '');
+        $list.innerHTML = filterAndMap(value);
+      });
+
+      // TODO NOT WORKING
+      document.querySelectorAll('.fruit').forEach(function ($el) {
+        $el.addEventListener('input', ({ target }) => {
+          $input.value = target.textContent;
+          $input.classList.remove('focus');
+          $input.blur();
+        })
+      });
+    </script>
+  </body>
+</html>
